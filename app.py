@@ -44,12 +44,12 @@ with left_column:
 
     output_quality = st.slider("Output Quality", min_value=1, max_value=100, value=90, step=5)
 
-    safety_checker = st.radio(
-        "Disable Safety Checker",
-        options=["Off", "On"],
-        index=1,
-        format_func=lambda x: "Disabled" if x == "On" else "Enabled"
-    )
+    # safety_checker = st.radio(
+    #     "Disable Safety Checker",
+    #     options=["Off", "On"],
+    #     index=1,
+    #     format_func=lambda x: "Disabled" if x == "On" else "Enabled"
+    # )
 
     if st.button("Generate Image"):
         if input_prompt:
@@ -64,7 +64,7 @@ with left_column:
                         "aspect_ratio": aspect_ratio,
                         "output_format": "png",
                         "output_quality": output_quality,
-                        "disable_safety_checker": safety_checker == "On",
+                        "disable_safety_checker": False #safety_checker == "On",
                     }
                 )
                 
