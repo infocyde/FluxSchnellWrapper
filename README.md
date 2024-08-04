@@ -1,4 +1,4 @@
-# FluxSchnellWrapper
+# Flux.1 Schnell Replicate API Wrapper (Also supports Develop Model)
 Just a simple streamlit wrapper around Flux Schnell calls to Replicate
 
 Cooked it up in about an hour using Claude.  It isn't perfect (like if you change the prompt) you need to click somewhere outside the input window to update the page 
