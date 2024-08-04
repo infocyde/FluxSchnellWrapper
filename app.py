@@ -87,11 +87,12 @@ try:
             index=0
         )
 
+        # Note Guidance doesn't work as I've opted for now to just save PNG formats, where guidance is ignored.  Also supported are webp and jpeg
         output_quality = st.slider("Output Quality", min_value=1, max_value=100, value=90, step=1)
 
         guidance = None
 
-        # Note Guidance doesn't work as I've opted for now to just save PNG formats, where guidance is ignored.  Also supported are webp and jpeg
+        
         if model_version == "dev":
             guidance = st.slider(
             "Guidance",
