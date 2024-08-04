@@ -103,12 +103,12 @@ try:
             format="%.2f"
         )
 
-        # safety_checker = st.radio(
-        #     "Disable Safety Checker",
-        #     options=["Off", "On"],
-        #     index=1,
-        #     format_func=lambda x: "Disabled" if x == "On" else "Enabled"
-        # )
+        safety_checker = st.radio(
+            "Disable Safety Checker",
+            options=["Off", "On"],
+            index=1,
+            format_func=lambda x: "Disabled" if x == "On" else "Enabled"
+        )
 
         seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
@@ -132,7 +132,7 @@ try:
                         "aspect_ratio": aspect_ratio,
                         "output_format": "png",
                         "output_quality": output_quality,
-                        "disable_safety_checker": False #safety_checker == "On"
+                        "disable_safety_checker": safety_checker == "On"
                     
                     }
                     

@@ -1,11 +1,9 @@
 # Flux.1 Schnell Replicate API Wrapper (Also supports Develop Model)
-Just a simple streamlit wrapper around Flux Schnell calls to Replicate
+Just a simple streamlit wrapper around Flux.1 Schnell and Develop API calls to Replicate
+This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
-Cooked it up in about an hour using Claude.  It isn't perfect (like if you change the prompt) you need to click somewhere outside the input window to update the page 
-before hitting the Image Generate button.
-
-# Note, this assumes you have a replicate key in an .env file a directory or more up from this project, so dotenv can load your key, else this will not work.
-To get a key, create a replicate account at replicate.com, and then follow the instruction on getting a key and use chatGPT to figure out how to create a .env file for python if you don't know how (that is where you want to put the key)
+# Note, ideally you put your replicate_api_token in your .env file (google or chatGPT for how to do that).  But there is a spot now above the generate image button to paste your replicate_api_token if you don't have it in your .env file
+To get a replicate auth token key, create a replicate account at replicate.com, and then follow the instruction on getting a key.
 
 1) Create your virtual enviornment 
 
