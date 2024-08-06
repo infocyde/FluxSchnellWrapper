@@ -29,6 +29,15 @@ try:
     if 'last_saved_image' not in st.session_state:
         st.session_state.last_saved_image = None
 
+
+    def wait_for_image(url, max_attempts=10, delay=2):
+        for attempt in range(max_attempts):
+            response = requests.head(url)
+            if response.status_code == 200:
+                return True
+            time.sleep(delay)
+        return False
+
     def download_image(url, prompt):
         if not os.path.exists('output'):
             os.makedirs('output')
@@ -62,7 +71,7 @@ try:
             st.warning("No image to delete or file not found.")
 
     # Streamlit app
-    st.title("Flux.1 - Schnell, Dev Streamlit GUI")
+    st.title("Flux.1 - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])
@@ -76,7 +85,7 @@ try:
 
         model_version = st.selectbox(
             "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive)",
-            options=["schnell", "dev"],
+            options=["schnell", "dev", "pro"],
             index=0
         )
         
@@ -87,29 +96,77 @@ try:
             index=0
         )
 
-        # Note Guidance doesn't work as I've opted for now to just save PNG formats, where guidance is ignored.  Also supported are webp and jpeg
-        output_quality = st.slider("Output Quality", min_value=1, max_value=100, value=90, step=1)
+        # Note Quality doesn't work as I've opted for now to just save PNG formats, where guidance is ignored.  Also supported are webp and jpeg
+        #output_quality = st.slider("Output Quality", min_value=1, max_value=100, value=90, step=1)
 
+        
+        # some default values since different versions of the model require different params
         guidance = None
-
+        steps = None
+        safety_checker = None
+        interval = None
+        safety_tolerance = None
+        
         
         if model_version == "dev":
             guidance = st.slider(
-            "Guidance",
-            min_value=0.0,
-            max_value=10.0,
-            value=3.5,
-            step=0.01,
-            format="%.2f"
-        )
+                "Guidance - How closely the model follows your prompt, 1-10, default 3.5",
+                min_value=0.0,
+                max_value=10.0,
+                value=3.5,
+                step=0.01,
+                format="%.2f"
+            )
+        
+        if model_version == "pro":
+            guidance = st.slider(
+                "Guidance - How closely the model follows your prompt, 2-5, default is 3",
+                min_value=2.0,
+                max_value=5.0,
+                value=3.0,
+                step=0.01,
+                format="%.2f"
+            )
+            
+        if model_version == "pro":
+            steps = st.slider(
+                "Steps - Quality/Detail of render, 1-100, default 25.",
+                min_value=1,
+                max_value=100,
+                value=25,
+                step=1
+            )    
 
-        safety_checker = st.radio(
-            "Disable Safety Checker",
-            options=["Off", "On"],
-            index=1,
-            format_func=lambda x: "Disabled" if x == "On" else "Enabled"
-        )
+            
 
+            interval = st.slider(
+                "Interval - Variance of the image, 4 being the most varied, default is 1",
+                min_value=1.0,
+                max_value=4.0,
+                value=1.0,
+                step=0.01,
+                format="%.2f"
+            )  
+
+            safety_tolerance = st.slider(
+                "Safety Tolerance - 1 to 5, 5 being least restrictive, 1 default (3 on default on here)",
+                min_value=1,
+                max_value=5,
+                value=3,
+                step=1
+            )     
+
+        if model_version != "pro":
+            safety_checker = st.radio(
+                "Safety Checker - Turn on model NSFW checking",
+                options=["Off", "On"],
+                index=1,
+                format_func=lambda x: "Disabled" if x == "On" else "Enabled"
+            )
+        
+        #
+
+        
         seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
         replicate_key = st.text_input("Replicate Key - If not provided, will try to use the key in .env file", key="rep_key")
@@ -131,31 +188,51 @@ try:
                         "prompt": input_prompt,
                         "aspect_ratio": aspect_ratio,
                         "output_format": "png",
-                        "output_quality": output_quality,
-                        "disable_safety_checker": safety_checker == "On"
-                    
+                        "output_quality": 100 # output_quality, note this is ignored if output is .png
                     }
-                    
-                    # Add seed to the input dictionary only if it's not None
+               
                     if seed is not None:
                         input_dict["seed"] = seed
                     
-                    # add guidance
-                    if model_version=="dev":
+                    if guidance is not None:
                         input_dict["guidance"] = guidance
+                    
+                    if steps is not None:
+                        input_dict["steps"] = steps
+
+                    if safety_checker is not None:
+                        input_dict["disable_safety_checker"] = safety_checker == "On"
+                        
+                    if safety_tolerance is not None:    
+                        input_dict["safety_tolerance"] = safety_tolerance
 
                     # Run the model with the prepared input
-                    output = replicate.run(
-                        f"black-forest-labs/flux-{model_version}",
-                        input=input_dict
-                    )
+                    try:
+                        output = replicate.run(
+                            f"black-forest-labs/flux-{model_version}",
+                            input=input_dict
+                        )
+                        
+                        if isinstance(output, list) and len(output) > 0:
+                            output = output[0]
 
-                    
-                    
-                    filepath = download_image(output, input_prompt)
-                    
-                    if filepath:
-                        st.image(filepath, caption="Generated Image")
+                        if not isinstance(output, str):
+                            st.error(f"Unexpected output format: {output}")
+                        else:
+
+                            with st.spinner('Waiting for image to be ready...'):
+                                if wait_for_image(output):
+                                    filepath = download_image(output, input_prompt)
+                                    if filepath:
+                                        st.image(filepath, caption="Generated Image")
+                                else:
+                                    st.error("Timed out waiting for image to be ready.")
+
+                    except Exception as e:
+                        st.error(f"Error generating image: {str(e)}")
+
+                  
+
             else:
                 st.warning("Please enter a prompt.")
 
