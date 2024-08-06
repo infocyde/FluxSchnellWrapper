@@ -1,4 +1,4 @@
-# Flux.1 Streamlit  API Wrapper (Also supports Develop Model)
+# Flux.1 Streamlit  API Wrapper 
 Just a simple streamlit wrapper around Flux.1 Schnell, Develop, and Pro API calls to Replicate
 This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
