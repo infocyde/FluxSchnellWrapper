@@ -28,7 +28,7 @@ If you have Conda or another way to manage python virtual enviornments, I'm sure
 
 What is a virtual environment?
 
-[ChatGPT]
+[ChatGPT] 
 A virtual environment in Python is an isolated environment that allows you to install and manage dependencies separately from the system-wide Python installation. It is used to avoid conflicts between project-specific dependencies and to ensure that each project has its own specific package versions.
 
 2) Install the requirements
