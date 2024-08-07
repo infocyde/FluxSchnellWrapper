@@ -1,5 +1,5 @@
-# Flux.1 Streamlit  API Wrapper 
-Just a simple streamlit wrapper around Flux.1 Schnell, Develop, and Pro API calls to Replicate
+# Flux.1 Streamlit GUI for Replicate Flux API
+Just a simple streamlit wrapper GUI around Flux.1 Schnell, Develop, and Pro API calls to Replicate
 This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
 This pretty much assumes some knowledge of python, and a development enviornment like Visual Studio Code
