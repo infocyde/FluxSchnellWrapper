@@ -28,6 +28,8 @@ try:
         st.session_state.prompt_history = []
     if 'last_saved_image' not in st.session_state:
         st.session_state.last_saved_image = None
+    if 'current_image' not in st.session_state:
+        st.session_state.current_image = None
 
 
     def wait_for_image(url, max_attempts=10, delay=2):
@@ -57,6 +59,7 @@ try:
                 file.write(response.content)
             st.success(f"Image downloaded and saved as output\{filename}")
             st.session_state.last_saved_image = filepath
+            st.session_state.current_image = filepath
             return filepath
         else:
             st.error(f"Failed to download image. Status code: {response.status_code}")
@@ -67,8 +70,20 @@ try:
             os.remove(st.session_state.last_saved_image)
             st.success(f"Deleted: {os.path.basename(st.session_state.last_saved_image)}")
             st.session_state.last_saved_image = None
+            st.session_state.current_image = None
         else:
             st.warning("No image to delete or file not found.")
+
+    def save_prompt(prompt):
+        if not os.path.exists('prompts'):
+            os.makedirs('prompts')
+        
+        filepath = os.path.join('prompts', 'saved_prompts.txt')
+        
+        with open(filepath, 'a') as file:
+            file.write(f"{prompt}\n\n")
+        
+        st.success(f"Prompt saved to prompts/saved_prompts.txt")
 
     # Streamlit app
     st.title("Flux.1 - Streamlit GUI")
@@ -174,11 +189,13 @@ try:
         if replicate_key != None and replicate_key != "":
             os.environ["REPLICATE_API_TOKEN"] = replicate_key
 
-        col1, col2,col3 = st.columns([2,2,4])
+        col1, col2, col3 = st.columns([2,2,2])
         with col1:
             generate_button = st.button("Generate Image")
         with col2:
             delete_button = st.button("Delete Last Image")
+        with col3:
+            save_prompt_button = st.button("Save Last Prompt")
 
         if generate_button:
             if input_prompt:
@@ -208,7 +225,13 @@ try:
 
                     # Run the model with the prepared input
                     try:
-                        output = replicate.run(
+                        client = None
+                        if replicate_key is None:
+                            client =   replicate.Client()
+                        else:
+                            client = replicate.Client(api_token=replicate_key)
+                        
+                        output = client.run(
                             f"black-forest-labs/flux-{model_version}",
                             input=input_dict
                         )
@@ -219,25 +242,32 @@ try:
                         if not isinstance(output, str):
                             st.error(f"Unexpected output format: {output}")
                         else:
-
                             with st.spinner('Waiting for image to be ready...'):
                                 if wait_for_image(output):
                                     filepath = download_image(output, input_prompt)
                                     if filepath:
-                                        st.image(filepath, caption="Generated Image")
+                                        st.session_state.current_image = filepath
                                 else:
                                     st.error("Timed out waiting for image to be ready.")
 
                     except Exception as e:
                         st.error(f"Error generating image: {str(e)}")
 
-                  
-
             else:
                 st.warning("Please enter a prompt.")
 
         if delete_button:
             delete_last_image()
+
+        if save_prompt_button:
+            if input_prompt:
+                save_prompt(input_prompt)
+            else:
+                st.warning("Please enter a prompt to save.")
+
+        # Display the current image
+        if st.session_state.current_image:
+            st.image(st.session_state.current_image, caption="Generated Image")
 
     # Margin column (empty for spacing)
     with margin_col:
