@@ -4,7 +4,7 @@ This is written in Python and Streamlit.  You must have a python 3.1x interprete
 
 This pretty much assumes some knowledge of python, and a development enviornment like Visual Studio Code
 
-# Note, ideally you put your replicate_api_token in your .env file (google or chatGPT for how to do that).  But there is a spot now above the generate image button to paste your replicate_api_token if you don't have it in your .env file
+Note, ideally you put your replicate_api_token in your .env file (google or chatGPT for how to do that).  But there is a spot now above the generate image button to paste your replicate_api_token if you don't have it in your .env file
 To get a replicate auth token key, create a replicate account at replicate.com, and then follow the instruction on getting a key.
 
 1) In a terminal window, navigate to the folder where you are going to install this code, and then type (assumes GIT is installed)
