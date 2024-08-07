@@ -2,6 +2,10 @@
 Just a simple streamlit wrapper GUI around Flux.1 Schnell, Develop, and Pro API calls to Replicate
 This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
+You can test a live version (without the save image and save prompt features) if you have a replicate auth token key here-
+
+https://keaz5dp6dkdmtqie6875jb.streamlit.app/
+
 This pretty much assumes some knowledge of python, and a development enviornment like Visual Studio Code
 
 Note, ideally you put your replicate_api_token in your .env file (google or chatGPT for how to do that).  But there is a spot now above the generate image button to paste your replicate_api_token if you don't have it in your .env file
