@@ -11,7 +11,7 @@ To get a replicate auth token key, create a replicate account at replicate.com, 
 
 Git clone https://github.com/infocyde/FluxSchnellWrapper.git
 
-# Note the above command might be slightly different if using Sudo but you can figure that out.
+Note the above command might be slightly different if using Sudo but you can figure that out.
 
 
 2) Create your virtual enviornment 
