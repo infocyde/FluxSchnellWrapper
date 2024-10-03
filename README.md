@@ -12,6 +12,9 @@ https://huggingface.co/spaces/infocyde/FluxGUI
 
 To get a replicate auth token key, create a replicate account at replicate.com, and then follow the instruction on getting a key.
 
+Also note, could I capture your key?  Yes.  Am I?  No.  I got 99 problems and grabbing keys for short term gain for long term consequences
+ain't another one I want!
+
 ----------------------------------------------------------
 To run locally: 
 
