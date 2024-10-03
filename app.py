@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 #                                                     *
 # *****************************************************
 
-st.set_page_config(layout="wide", page_title="Flux.1 in Streamlit with Replicate!", page_icon=":frame_with_picture:")
+st.set_page_config(layout="wide", page_title="Flux.1.X in Streamlit with Replicate!", page_icon=":frame_with_picture:")
 
 
 # Load environment variables
@@ -86,7 +86,7 @@ try:
         st.success(f"Prompt saved to prompts/saved_prompts.txt")
 
     # Streamlit app
-    st.title("Flux.1.x - Streamlit GUI")
+    st.title("Flux.1.X - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])

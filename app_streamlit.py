@@ -52,7 +52,7 @@ try:
         return href
 
     # Streamlit app
-    st.title("Flux.1.x - Streamlit GUI")
+    st.title("Flux.1.X - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])
