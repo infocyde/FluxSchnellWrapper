@@ -2,13 +2,20 @@
 Just a simple streamlit wrapper GUI around Flux.1 Schnell, Develop, and Pro API calls to Replicate.
 This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
-You can test a live version (without the save image and save prompt features) if you have a replicate auth token key here-
+You can test a live version if you have a replicate auth token key here-
 
-https://keaz5dp6dkdmtqie6875jb.streamlit.app/
+https://keaz5dp6dkdmtqie6875jb.streamlit.app/ (appears to not be working today).  
 
-This pretty much assumes some knowledge of python, and a development enviornment like Visual Studio Code
+You can also check it out on Hugging Face (still need a replicate key)
+
+https://huggingface.co/spaces/infocyde/FluxGUI
 
 To get a replicate auth token key, create a replicate account at replicate.com, and then follow the instruction on getting a key.
+
+----------------------------------------------------------
+To run locally: 
+
+This pretty much assumes some knowledge of python, and a development enviornment like Visual Studio Code
 
 1) In a terminal window, navigate to the folder where you are going to install this code, and then type (assumes GIT is installed)
 
