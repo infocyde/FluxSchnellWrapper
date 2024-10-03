@@ -184,7 +184,7 @@ try:
         
         seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
-        replicate_key = st.text_input("Replicate Key - If not provided, will try to use the key in .env file", key="rep_key")
+        replicate_key = st.text_input("Replicate Key - If not provided, will try to use the key in .env file", key="rep_key", type="password")
         
         if replicate_key != None and replicate_key != "":
             os.environ["REPLICATE_API_TOKEN"] = replicate_key

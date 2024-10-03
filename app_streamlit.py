@@ -136,7 +136,7 @@ try:
         
         seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
-        replicate_key = st.text_input("Replicate Key - Required", key="rep_key")
+        replicate_key = st.text_input("Replicate Key - Required", key="rep_key", type="password")
         if replicate_key is None:
             st.warning("You must provide a replicate auth token key for this to work.")
             st.stop()
