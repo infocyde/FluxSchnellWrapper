@@ -52,7 +52,7 @@ try:
         return href
 
     # Streamlit app
-    st.title("Flux.1 - Streamlit GUI")
+    st.title("Flux.1.x - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])
@@ -63,7 +63,7 @@ try:
 
         model_version = st.selectbox(
             "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive)",
-            options=["schnell", "dev", "pro"],
+            options=["schnell", "dev", "pro","1.1-pro"],
             index=0
         )
         
@@ -90,7 +90,7 @@ try:
                 format="%.2f"
             )
         
-        if model_version == "pro":
+        if model_version.startswith("pro"):
             guidance = st.slider(
                 "Guidance - How closely the model follows your prompt, 2-5, default is 3",
                 min_value=2.0,
@@ -125,7 +125,7 @@ try:
                 step=1
             )     
 
-            if model_version != "pro":
+            if not model_version.startswith("pro"):
                 safety_checker = "On"
         #     safety_checker = st.radio(
         #         "Safety Checker - Turn on model NSFW checking",
