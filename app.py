@@ -93,8 +93,7 @@ try:
 
     # Left column contents
     with left_column:
-        
-        
+              
         
         input_prompt = st.text_area("Enter your prompt:", height=100)
 
@@ -133,7 +132,7 @@ try:
                 format="%.2f"
             )
         
-        if model_version.startswith("pro"):
+        if model_version.startswith("pro") or model_version.startswith("1"):
             guidance = st.slider(
                 "Guidance - How closely the model follows your prompt, 2-5, default is 3",
                 min_value=2.0,
@@ -143,7 +142,7 @@ try:
                 format="%.2f"
             )
             
-        if model_version.startswith("pro"):
+        if model_version.startswith("pro") or model_version.startswith("1"):
             steps = st.slider(
                 "Steps - Quality/Detail of render, 1-100, default 25.",
                 min_value=1,
@@ -171,7 +170,7 @@ try:
                 step=1
             )     
 
-        if not model_version.startswith("pro"):
+        if not model_version.startswith("pro") and not model_version.startswith("1"):
             safety_checker = st.radio(
                 "Safety Checker - Turn on model NSFW checking",
                 options=["Off", "On"],
