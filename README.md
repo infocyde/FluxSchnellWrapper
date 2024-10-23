@@ -1,12 +1,8 @@
-# Flux.1 Streamlit GUI for Replicate Flux API
-Just a simple streamlit wrapper GUI around Flux.1 Schnell, Develop, and Pro API calls to Replicate.
+# Flux.1.1 + SD 3.5 Streamlit GUI for Replicate Flux API
+Just a simple streamlit wrapper GUI around Flux.1 Schnell, Develop, Pro and Stability.ai's Stable Diffusion 3.5 API calls to Replicate.
 This is written in Python and Streamlit.  You must have a python 3.1x interpreter installed on your system.
 
 You can test a live version if you have a replicate auth token key here-
-
-https://keaz5dp6dkdmtqie6875jb.streamlit.app/ (appears to not be working today).  
-
-You can also check it out on Hugging Face (still need a replicate key)
 
 https://huggingface.co/spaces/infocyde/FluxGUI
 

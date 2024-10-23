@@ -9,6 +9,29 @@ from io import BytesIO
 from PIL import Image
 import base64
 
+
+
+# --- ********** dropping support for running in streamlit's cloud, this page is not up-to-date *********************
+
+
+st.write("Depreciated...might bring back later, but probably not.")
+st.stop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ******* For More Info on Flux.1 on Replicate ********
 #                                                     *
 #      https://replicate.com/black-forest-labs        *
@@ -63,7 +86,7 @@ try:
 
         model_version = st.selectbox(
             "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive)",
-            options=["schnell", "dev", "pro","1.1-pro"],
+            options=["schnell", "dev", "pro"],
             index=0
         )
         
