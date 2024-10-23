@@ -39,15 +39,15 @@ What is a virtual environment?
 [ChatGPT] 
 A virtual environment in Python is an isolated environment that allows you to install and manage dependencies separately from the system-wide Python installation. It is used to avoid conflicts between project-specific dependencies and to ensure that each project has its own specific package versions.
 
-2) Install the requirements
+3) Install the requirements
 
 In the terminal type
 
 pip install -r requirements.txt  
 
-3) run streamlit
+4) run streamlit
 
-In the terminal type
+In the terminal type (assuming you are in the directory of the project)
 
 streamlit run app.py    
 
@@ -59,7 +59,7 @@ Why is this better than using replicate's web interface?
 - It isn't, just different
 - It saves the images locally, so you don't have to hassle with that
 - You can save prompts
-- You can switch between schnell and develop models quickly without having to reinput a prompt
+- You can switch between models quickly without having to reinput a prompt
 
 Have fun!
 
