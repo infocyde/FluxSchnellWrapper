@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 #                                                     *
 # *****************************************************
 
-st.set_page_config(layout="wide", page_title="Flux.1.X in Streamlit with Replicate!", page_icon=":frame_with_picture:")
+st.set_page_config(layout="wide", page_title="Flux.1.X and SD 3.5 in Streamlit with Replicate!", page_icon=":frame_with_picture:")
 
 
 # Load environment variables
@@ -86,7 +86,7 @@ try:
         st.success(f"Prompt saved to prompts/saved_prompts.txt")
 
     # Streamlit app
-    st.title("Flux.1.X - Streamlit GUI")
+    st.title("Flux.1.X / SD 3.5 Turbo - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])
@@ -98,8 +98,8 @@ try:
         input_prompt = st.text_area("Enter your prompt:", height=100)
 
         model_version = st.selectbox(
-            "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive)",
-            options=["schnell", "dev", "pro","1.1-pro"],
+            "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive, pro 1.1: latest, SD 3.5 Large & Large Turbo: Stability.ai's latest)",
+            options=["schnell", "dev", "pro","1.1-pro", "SD 3.5 Large Turbo", "SD 3.5 Large"],
             index=0
         )
         
@@ -120,6 +120,7 @@ try:
         safety_checker = None
         interval = None
         safety_tolerance = None
+        cfg = None # sd models
         
         
         if model_version == "dev":
@@ -151,8 +152,6 @@ try:
                 step=1
             )    
 
-            
-
             interval = st.slider(
                 "Interval - Variance of the image, 4 being the most varied, default is 1",
                 min_value=1.0,
@@ -170,7 +169,7 @@ try:
                 step=1
             )     
 
-        if not model_version.startswith("pro") and not model_version.startswith("1"):
+        if not model_version.startswith("pro") and not model_version.startswith("1") and not model_version.startswith("SD"):
             safety_checker = st.radio(
                 "Safety Checker - Turn on model NSFW checking",
                 options=["Off", "On"],
@@ -178,7 +177,37 @@ try:
                 format_func=lambda x: "Disabled" if x == "On" else "Enabled"
             )
         
-        #
+        if model_version == "SD 3.5 Large Turbo":
+            cfg =  st.slider(
+                "CFG - Similarity to prompt, 0-20, default is 0 ",
+                min_value=1,
+                max_value=20,
+                value=1,
+                step=1
+            )    
+            steps = st.slider(
+                "Steps - Quality/Detail of render, 1-10, default 4.",
+                min_value=1,
+                max_value=10,
+                value=4,
+                step=1
+            )   
+
+        if model_version == "SD 3.5 Large":
+            cfg =  st.slider(
+                "CFG - Similarity to prompt, 0-20, default is 3.5 ",
+                min_value=0.0,
+                max_value=20.0,
+                value=3.5,
+                step=.5
+            )    
+            steps = st.slider(
+                "Steps - Quality/Detail of render, 1-50, default 35.",
+                min_value=1,
+                max_value=50,
+                value=35,
+                step=1
+            )   
 
         
         seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
@@ -221,6 +250,12 @@ try:
                         
                     if safety_tolerance is not None:    
                         input_dict["safety_tolerance"] = safety_tolerance
+                    
+                    if cfg is not None:
+                         input_dict["cfg"] = cfg
+
+
+                    
 
                     # Run the model with the prepared input
                     try:
@@ -230,8 +265,22 @@ try:
                         else:
                             client = replicate.Client(api_token=replicate_key)
                         
+                        # refactor if this model list gets any bigger
+                        api_end_point = None 
+                        
+                        if model_version=="SD 3.5 Large Turbo":
+                            api_end_point = "stability-ai/stable-diffusion-3.5-large-turbo"
+                        elif model_version=="SD 3.5 Large":
+                            api_end_point = "stability-ai/stable-diffusion-3.5-large"
+                        else:
+                            api_end_point = f"black-forest-labs/flux-{model_version}"
+                        
+                        print(f"{input_dict}")
+                        print(api_end_point)
+
+
                         output = client.run(
-                            f"black-forest-labs/flux-{model_version}", 
+                            api_end_point, 
                             input=input_dict
                         )
                         
