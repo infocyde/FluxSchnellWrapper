@@ -180,10 +180,10 @@ try:
         if model_version == "SD 3.5 Large Turbo":
             cfg =  st.slider(
                 "CFG - Similarity to prompt, 0-20, default is 0 ",
-                min_value=1,
-                max_value=20,
-                value=1,
-                step=1
+                min_value=1.00,
+                max_value=20.00,
+                value=1.00,
+                step=.05
             )    
             steps = st.slider(
                 "Steps - Quality/Detail of render, 1-10, default 4.",
