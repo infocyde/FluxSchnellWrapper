@@ -4,7 +4,9 @@ import requests
 import time
 import os
 import re
+
 from dotenv import load_dotenv
+load_dotenv()
 
 # ******* For More Info on Flux.1 on Replicate ********
 #                                                     *
@@ -12,11 +14,13 @@ from dotenv import load_dotenv
 #                                                     *
 # *****************************************************
 
-st.set_page_config(layout="wide", page_title="Flux.1.X and SD 3.5 in Streamlit with Replicate!", page_icon=":frame_with_picture:")
+st.set_page_config(layout="wide", page_title="Flux.1.X and Qwen-Image in Streamlit with Replicate!", page_icon=":frame_with_picture:")
 
 
-# Load environment variables
-load_dotenv()
+
+
+
+
 
 
 # Global error catch as I'm lazy
@@ -57,7 +61,7 @@ try:
         if response.status_code == 200:
             with open(filepath, 'wb') as file:
                 file.write(response.content)
-            st.success(f"Image downloaded and saved as output\{filename}")
+            st.success(f"Image downloaded and saved as output\\{filename}")
             st.session_state.last_saved_image = filepath
             st.session_state.current_image = filepath
             return filepath
@@ -86,7 +90,7 @@ try:
         st.success(f"Prompt saved to prompts/saved_prompts.txt")
 
     # Streamlit app
-    st.title("Flux.1.X / SD 3.5 Turbo - Streamlit GUI")
+    st.title("Flux.1.X / Qwen-Image - Streamlit GUI")
 
     # Create three columns
     left_column, margin_col, right_column = st.columns([6, 1, 5])
@@ -98,8 +102,8 @@ try:
         input_prompt = st.text_area("Enter your prompt:", height=100)
 
         model_version = st.selectbox(
-            "Model Version (schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive, pro 1.1: latest, SD 3.5 Large & Large Turbo: Stability.ai's latest)",
-            options=["schnell", "dev", "pro","1.1-pro", "SD 3.5 Large Turbo", "SD 3.5 Large"],
+            "Model Version (Qwen-Image: fast-cheep-good, schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive, pro 1.1: latest, SD 3.5 Large & Large Turbo: Stability.ai's latest)",
+            options=["Qwen-Image","schnell", "dev", "pro","1.1-pro", "SD 3.5 Large Turbo", "SD 3.5 Large"],
             index=0
         )
         
@@ -122,100 +126,109 @@ try:
         safety_tolerance = None
         cfg = None # sd models
         
-        
-        if model_version == "dev":
-            guidance = st.slider(
-                "Guidance - How closely the model follows your prompt, 1-10, default 3.5",
-                min_value=0.0,
-                max_value=10.0,
-                value=3.5,
-                step=0.01,
-                format="%.2f"
-            )
-        
-        if model_version.startswith("pro") or model_version.startswith("1"):
-            guidance = st.slider(
-                "Guidance - How closely the model follows your prompt, 2-5, default is 3",
-                min_value=2.0,
-                max_value=5.0,
-                value=3.0,
-                step=0.01,
-                format="%.2f"
-            )
+
+        # Qwen 
+    
+        if model_version !="Qwen-Image":
+                
+
+
             
-        if model_version.startswith("pro") or model_version.startswith("1"):
-            steps = st.slider(
-                "Steps - Quality/Detail of render, 1-100, default 25.",
-                min_value=1,
-                max_value=100,
-                value=25,
-                step=1
-            )    
-
-            interval = st.slider(
-                "Interval - Variance of the image, 4 being the most varied, default is 1",
-                min_value=1.0,
-                max_value=4.0,
-                value=1.0,
-                step=0.01,
-                format="%.2f"
-            )  
-
-            safety_tolerance = st.slider(
-                "Safety Tolerance - 1 to 5, 5 being least restrictive, 1 default (3 on default on here)",
-                min_value=1,
-                max_value=5,
-                value=3,
-                step=1
-            )     
-
-        if not model_version.startswith("pro") and not model_version.startswith("1") and not model_version.startswith("SD"):
-            safety_checker = st.radio(
-                "Safety Checker - Turn on model NSFW checking",
-                options=["Off", "On"],
-                index=1,
-                format_func=lambda x: "Disabled" if x == "On" else "Enabled"
-            )
+            if model_version == "dev":
+                guidance = st.slider(
+                    "Guidance - How closely the model follows your prompt, 1-10, default 3.5",
+                    min_value=0.0,
+                    max_value=10.0,
+                    value=3.5,
+                    step=0.01,
+                    format="%.2f"
+                )
+            
+            if model_version.startswith("pro") or model_version.startswith("1"):
+                guidance = st.slider(
+                    "Guidance - How closely the model follows your prompt, 2-5, default is 3",
+                    min_value=2.0,
+                    max_value=5.0,
+                    value=3.0,
+                    step=0.01,
+                    format="%.2f"
+                )
+                
+            if model_version.startswith("pro") or model_version.startswith("1"):
+                steps = st.slider(
+                    "Steps - Quality/Detail of render, 1-100, default 25.",
+                    min_value=1,
+                    max_value=100,
+                    value=25,
+                    step=1
+                )    
         
-        if model_version == "SD 3.5 Large Turbo":
-            cfg =  st.slider(
-                "CFG - Similarity to prompt, 0-20, default is 0 ",
-                min_value=1.00,
-                max_value=20.00,
-                value=1.00,
-                step=.05
-            )    
-            steps = st.slider(
-                "Steps - Quality/Detail of render, 1-10, default 4.",
-                min_value=1,
-                max_value=10,
-                value=4,
-                step=1
-            )   
+                interval = st.slider(
+                    "Interval - Variance of the image, 4 being the most varied, default is 1",
+                    min_value=1.0,
+                    max_value=4.0,
+                    value=1.0,
+                    step=0.01,
+                    format="%.2f"
+                )  
 
-        if model_version == "SD 3.5 Large":
-            cfg =  st.slider(
-                "CFG - Similarity to prompt, 0-20, default is 3.5 ",
-                min_value=0.0,
-                max_value=20.0,
-                value=3.5,
-                step=.5
-            )    
-            steps = st.slider(
-                "Steps - Quality/Detail of render, 1-50, default 35.",
-                min_value=1,
-                max_value=50,
-                value=35,
-                step=1
-            )   
+                safety_tolerance = st.slider(
+                    "Safety Tolerance - 1 to 5, 5 being least restrictive, 1 default (3 on default on here)",
+                    min_value=1,
+                    max_value=5,
+                    value=3,
+                    step=1
+                )     
 
-        
-        seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
+            if not model_version.startswith("pro") and not model_version.startswith("1") and not model_version.startswith("SD"):
+                safety_checker = st.radio(
+                    "Safety Checker - Turn on model NSFW checking",
+                    options=["Off", "On"],
+                    index=1,
+                    format_func=lambda x: "Disabled" if x == "On" else "Enabled"
+                )
+            
+            if model_version == "SD 3.5 Large Turbo":
+                cfg =  st.slider(
+                    "CFG - Similarity to prompt, 0-20, default is 0 ",
+                    min_value=1.00,
+                    max_value=20.00,
+                    value=1.00,
+                    step=.05
+                )    
+                steps = st.slider(
+                    "Steps - Quality/Detail of render, 1-10, default 4.",
+                    min_value=1,
+                    max_value=10,
+                    value=4,
+                    step=1
+                )   
+
+            if model_version == "SD 3.5 Large":
+                cfg =  st.slider(
+                    "CFG - Similarity to prompt, 0-20, default is 3.5 ",
+                    min_value=0.0,
+                    max_value=20.0,
+                    value=3.5,
+                    step=.5
+                )    
+                steps = st.slider(
+                    "Steps - Quality/Detail of render, 1-50, default 35.",
+                    min_value=1,
+                    max_value=50,
+                    value=35,
+                    step=1
+                )   
+
+            
+            seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
         replicate_key = st.text_input("Replicate Key - If not provided, will try to use the key in .env file", key="rep_key", type="password")
         
         if replicate_key != None and replicate_key != "":
             os.environ["REPLICATE_API_TOKEN"] = replicate_key
+
+        
 
         col1, col2, col3 = st.columns([2,2,2])
         with col1:
@@ -272,11 +285,13 @@ try:
                             api_end_point = "stability-ai/stable-diffusion-3.5-large-turbo"
                         elif model_version=="SD 3.5 Large":
                             api_end_point = "stability-ai/stable-diffusion-3.5-large"
+                        elif model_version=="Qwen-Image":
+                            api_end_point = "qwen/qwen-image" # or wavespeedai/qwen-image
                         else:
                             api_end_point = f"black-forest-labs/flux-{model_version}"
                         
-                        print(f"{input_dict}")
-                        print(api_end_point)
+                        # print(f"{input_dict}")
+                        # print(api_end_point)
 
 
                         output = client.run(
@@ -287,16 +302,16 @@ try:
                         if isinstance(output, list) and len(output) > 0:
                             output = output[0]
 
-                        if not isinstance(output, str):
-                            st.error(f"Unexpected output format: {output}")
-                        else:
-                            with st.spinner('Waiting for image to be ready...'):
-                                if wait_for_image(output):
-                                    filepath = download_image(output, input_prompt)
-                                    if filepath:
-                                        st.session_state.current_image = filepath
-                                else:
-                                    st.error("Timed out waiting for image to be ready.")
+                        # if not isinstance(output, str):
+                        #     st.error(f"Unexpected output format: {output}")
+                        # else:
+                        with st.spinner('Waiting for image to be ready...'):
+                            if wait_for_image(output):
+                                filepath = download_image(output, input_prompt)
+                                if filepath:
+                                    st.session_state.current_image = filepath
+                            else:
+                                st.error("Timed out waiting for image to be ready.")
 
                     except Exception as e:
                         st.error(f"Error generating image: {str(e)}")
