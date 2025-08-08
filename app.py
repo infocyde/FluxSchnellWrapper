@@ -18,11 +18,6 @@ st.set_page_config(layout="wide", page_title="Flux.1.X and Qwen-Image in Streaml
 
 
 
-
-
-
-
-
 # Global error catch as I'm lazy
 try:
 
@@ -125,6 +120,7 @@ try:
         interval = None
         safety_tolerance = None
         cfg = None # sd models
+        seed = None
         
 
         # Qwen 
@@ -286,7 +282,7 @@ try:
                         elif model_version=="SD 3.5 Large":
                             api_end_point = "stability-ai/stable-diffusion-3.5-large"
                         elif model_version=="Qwen-Image":
-                            api_end_point = "qwen/qwen-image" # or wavespeedai/qwen-image
+                            api_end_point =  "wavespeedai/qwen-image" # "qwen/qwen-image" - wavespeedai less restrictive
                         else:
                             api_end_point = f"black-forest-labs/flux-{model_version}"
                         
