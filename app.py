@@ -31,7 +31,7 @@ try:
         st.session_state.current_image = None
 
 
-    def wait_for_image(url, max_attempts=10, delay=2):
+    def wait_for_image(url, model_version, max_attempts=10, delay=2):
         for attempt in range(max_attempts):
             response = requests.head(url)
             if response.status_code == 200:
@@ -48,7 +48,13 @@ try:
         clean_prompt = clean_prompt.strip()[:30]
         clean_prompt = clean_prompt.replace(' ', '_')
         
-        filename = f"{timestamp}_{clean_prompt}.png"
+        
+        fileext = "png"
+        if model_version == "Qwen-Image":
+            fileext = "jpg"
+
+
+        filename = f"{timestamp}_{clean_prompt}.{fileext}"
         filepath = os.path.join('output', filename)
         
         response = requests.get(url)
@@ -302,7 +308,7 @@ try:
                         #     st.error(f"Unexpected output format: {output}")
                         # else:
                         with st.spinner('Waiting for image to be ready...'):
-                            if wait_for_image(output):
+                            if wait_for_image(output, model_version):
                                 filepath = download_image(output, input_prompt)
                                 if filepath:
                                     st.session_state.current_image = filepath
