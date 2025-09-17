@@ -4,9 +4,6 @@ import requests
 import time
 import os
 import re
-from PIL import Image
-import tempfile
-import base64
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -106,15 +103,15 @@ try:
         input_prompt = st.text_area("Enter your prompt:", height=100)
 
         model_version = st.selectbox(
-            "Model Version (Qwen-Image: fast-cheep-good, Qwen-Image-Edit: replace items/edit schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive, pro 1.1: latest, SD 3.5 Large & Large Turbo: Stability.ai's latest)",
-            options=["Qwen-Image","Qwen-Image-Edit","schnell", "dev", "pro","1.1-pro", "SD 3.5 Large Turbo", "SD 3.5 Large"],
+            "Model Version (Qwen-Image: fast-cheep-good, schnell: fast and cheap, dev: quick and inexpensive, pro: moderate render time, most expensive, pro 1.1: latest, SD 3.5 Large & Large Turbo: Stability.ai's latest)",
+            options=["Qwen-Image","schnell", "dev", "pro","1.1-pro", "SD 3.5 Large Turbo", "SD 3.5 Large"],
             index=0
         )
         
         
         aspect_ratio = st.selectbox(
             "Aspect Ratio",
-            options=["1:1", "16:9", "9:16", "21:9", "2:3", "3:2", "4:5", "5:4", "9:21"],
+            options=["1:1", "16:9", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],
             index=0
         )
 
@@ -130,14 +127,13 @@ try:
         safety_tolerance = None
         cfg = None # sd models
         seed = None
-        image_format = "png"
         
 
         # Qwen 
     
-        if not model_version.startswith("Qwen"):
+        if model_version !="Qwen-Image":
                 
-            image_format = "jpg"
+
 
             
             if model_version == "dev":
@@ -229,29 +225,6 @@ try:
             
             seed = st.number_input("Seed (optional)", min_value=0, max_value=2**32-1, step=1, value=None, key="seed")
 
-        else:
-            # File uploader
-            uploaded_file = st.file_uploader(
-                "Choose an image file", 
-                type=['png', 'jpg', 'jpeg', 'webp'],
-                help="Upload the image you want to edit"
-            )
-
-            # Display uploaded image
-            if uploaded_file is not None:
-                # Display the uploaded image
-                image = Image.open(uploaded_file)
-                st.image(image, caption="Uploaded Image", use_container_width=True)
-                
-                # Save uploaded file temporarily to get a URL (for local testing)
-                # In production, you'd want to upload to a cloud service
-                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp_file:
-                    tmp_file.write(uploaded_file.getvalue())
-                    temp_path = tmp_file.name
-                
-                st.success("✅ Image uploaded successfully!")
-                
-        
         replicate_key = st.text_input("Replicate Key - If not provided, will try to use the key in .env file", key="rep_key", type="password")
         
         if replicate_key != None and replicate_key != "":
@@ -274,7 +247,7 @@ try:
                     input_dict = {
                         "prompt": input_prompt,
                         "aspect_ratio": aspect_ratio,
-                        "output_format": image_format,
+                        "output_format": "png",
                         "output_quality": 100 # output_quality, note this is ignored if output is .png
                     }
                
@@ -316,40 +289,17 @@ try:
                             api_end_point = "stability-ai/stable-diffusion-3.5-large"
                         elif model_version=="Qwen-Image":
                             api_end_point =  "wavespeedai/qwen-image" # "qwen/qwen-image" - wavespeedai less restrictive
-                        elif model_version == "Qwen-Image-Edit":
-                            api_end_point = "qwen/qwen-image-edit"
-                           
                         else:
                             api_end_point = f"black-forest-labs/flux-{model_version}"
                         
-                  
-
-                        
-
-                        # todo, make this toggles
-                        if model_version.startswith("Qwen"):
-                            input_dict["output_quality"] = 100
-                            input_dict["disable_safety_checker"] =  True
-
-
                         # print(f"{input_dict}")
                         # print(api_end_point)
 
-                        #print("->" + api_end_point)
 
-
-                        # Only add image if file is uploaded
-                        if uploaded_file is not None:
-                            with open(temp_path, "rb") as f:
-                                input_dict["image"] = f
-                                output = client.run(api_end_point, input=input_dict)
-                        else:
-                            output = client.run(api_end_point, input=input_dict)
-
-                        # output = client.run(
-                        #     api_end_point, 
-                        #     input=input_dict
-                        # )
+                        output = client.run(
+                            api_end_point, 
+                            input=input_dict
+                        )
                         
                         if isinstance(output, list) and len(output) > 0:
                             output = output[0]
